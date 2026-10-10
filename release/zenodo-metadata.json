@@ -1,0 +1,29 @@
+{
+  "metadata": {
+    "title": "ε-Sufficient Context: Definitions for Code Editing by Bounded Readers",
+    "upload_type": "publication",
+    "publication_type": "preprint",
+    "publication_date": "2026-10-11",
+    "description": "<p>Retrieving context for a language model that edits code is usually evaluated by end-task pass rate. There is no agreed definition of what context is sufficient, and the classical notion from program slicing assumes a lossless reader for whom more context never hurts. That assumption fails for language models, whose accuracy falls as input grows. This note fixes definitions. A change request is a contract (Δ, D, I) with a frame condition. A context K is ε-sufficient for an editor A if A's success on K is within ε of its success on the best context, not on the full repository. Under a coverage-times-degradation model of the editor we prove, and mechanise in Lean 4, that ε-sufficiency is not closed under superset, while it is closed under superset when the reader is lossless. We state the forward slice as a frame requirement, define context-closed languages by three properties, and describe a planned benchmark, SuffBench, whose instances carry ground-truth minimal contexts. No experiments are reported; the purpose is to timestamp the definitions.</p>",
+    "creators": [
+      {
+        "name": "Johansen, Jude Castiel",
+        "affiliation": "Independent researcher",
+        "orcid": "0009-0002-5644-3073"
+      }
+    ],
+    "access_right": "open",
+    "license": "cc-by-4.0",
+    "keywords": ["context sufficiency", "program slicing", "language model code editing", "frame condition", "Lean 4", "SuffBench"],
+    "related_identifiers": [
+      {
+        "identifier": "https://github.com/Shockware-Limited/context-sufficiency-note",
+        "relation": "isSupplementedBy",
+        "resource_type": "software",
+        "scheme": "url"
+      }
+    ],
+    "version": "1.0.0",
+    "language": "eng"
+  }
+}
