@@ -1,10 +1,10 @@
 {
   "metadata": {
-    "title": "ε-Sufficient Context: Definitions for Code Editing by Bounded Readers",
+    "title": "ε-Sufficient Context for Bounded Readers: Definitions and a Non-Monotonicity Result for Code Editing",
     "upload_type": "publication",
     "publication_type": "preprint",
     "publication_date": "2026-10-11",
-    "description": "<p>Retrieving context for a language model that edits code is usually evaluated by end-task pass rate. There is no agreed definition of what context is sufficient, and the classical notion from program slicing assumes a lossless reader for whom more context never hurts. That assumption fails for language models, whose accuracy falls as input grows. This note fixes definitions. A change request is a contract (Δ, D, I) with a frame condition. A context K is ε-sufficient for an editor A if A's success on K is within ε of its success on the best context, not on the full repository. Under a coverage-times-degradation model of the editor we prove, and mechanise in Lean 4, that ε-sufficiency is not closed under superset, while it is closed under superset when the reader is lossless. We state the forward slice as a frame requirement, define context-closed languages by three properties, and describe a planned benchmark, SuffBench, whose instances carry ground-truth minimal contexts. No experiments are reported; the purpose is to timestamp the definitions.</p>",
+    "description": "<p>Context retrieval for a language model that edits code is evaluated almost entirely by end-task pass rate. There is no agreed definition of what context is sufficient, and the natural baselines, program slicing and the principle of total evidence, assume a reader for whom more information never hurts. Language models are not such readers: their accuracy falls as input grows. This note fixes definitions that take that into account. A change request is a contract (Δ, D, I) with an explicit frame condition and an oracle that approximates it. A context K is ε-sufficient for an editor A when A's success on K is within ε of its success on the best context in a stated candidate family, not on the full repository. Under a stylised coverage-times-degradation model we prove, and mechanise in Lean 4, that ε-sufficiency is not closed under superset, with a drop that grows with the amount of irrelevant material, while it is closed under superset for a lossless reader. We state the forward slice as a requirement on the oracle, give three design properties that would make the minimal context computable, and report a mutation-based measurement on a real Go repository of how often a body-only change is caught only by tests outside the changed package, together with the token cost of including them. Finally we describe a planned benchmark, SuffBench, whose instances carry observation-based oracle slices. No language-model experiments are reported.</p>",
     "creators": [
       {
         "name": "Johansen, Jude Castiel",
@@ -14,7 +14,16 @@
     ],
     "access_right": "open",
     "license": "cc-by-4.0",
-    "keywords": ["context sufficiency", "program slicing", "language model code editing", "frame condition", "Lean 4", "SuffBench"],
+    "keywords": [
+      "context sufficiency",
+      "program slicing",
+      "language model code editing",
+      "frame condition",
+      "regression test selection",
+      "mutation analysis",
+      "Lean 4",
+      "SuffBench"
+    ],
     "related_identifiers": [
       {
         "identifier": "https://github.com/Shockware-Limited/context-sufficiency-note",

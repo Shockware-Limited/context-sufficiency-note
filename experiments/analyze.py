@@ -43,7 +43,7 @@ def main():
         "pctFitSmall": pct(fit128, len(comp)), "pctFitLarge": pct(fit200, len(comp)),
     }
     out = pathlib.Path(a.out)
-    out.write_text("".join(f"\\newcommand{{\\{k}}}{{{v}}}\n" for k, v in macros.items()), encoding="utf-8")
+    out.write_text("".join(f"\\newcommand{{\\{k}}}{{{v}}}\n" for k, v in macros.items()), encoding="utf-8", newline="\n")
     print(f"wrote {out}")
     for k, v in macros.items(): print(f"  {k:14s} {v}")
     # operator breakdown

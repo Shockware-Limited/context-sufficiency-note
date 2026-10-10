@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use these definitions, please cite this note."
 type: generic
-title: "ε-Sufficient Context: Definitions for Code Editing by Bounded Readers"
+title: "ε-Sufficient Context for Bounded Readers: Definitions and a Non-Monotonicity Result for Code Editing"
 authors:
   - family-names: Johansen
     given-names: Jude Castiel
