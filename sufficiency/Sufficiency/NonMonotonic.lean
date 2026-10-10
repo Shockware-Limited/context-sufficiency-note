@@ -8,94 +8,181 @@ import Mathlib
 /-!
 # Non-monotonicity of ε-sufficient context
 
-Mechanisation of the Proposition and the Lemma in Section 5 of
+Mechanisation of Section 5 of
 "ε-Sufficient Context: Definitions for Code Editing by Bounded Readers".
 
-Model.  Units form a type `U`.  A context is a `Finset U`.  The oracle slice
-`O : Finset U` is the set of units that determine the verdict.  A `Reader`
-has a degradation curve `g : ℕ → ℚ`, non-negative, giving success as a
-function of context size.  Success on `K` is `g |K|` if `O ⊆ K`, else `0`.
-The optimum is `g |O|`.  `K` is ε-sufficient iff `success ≥ optimum − ε`.
+## Model
+
+* Units form a finite type `U`; a context is a `Finset U`.
+* A `Reader` has a degradation curve `g : ℕ → ℚ` with values in `[0,1]`.
+* A `Coverage` is any function `r : Finset U → ℚ` with values in `[0,1]`.
+  No shape is assumed; the binary form `[O ⊆ K]` is one instance (`binCov`).
+* `success r K = r K * g |K|`.
+* `optimum` is the **maximum** of `success` over all contexts (a genuine `sup'` over
+  the powerset of `univ`), so `sufficient ε K ↔ optimum - ε ≤ success K` is exactly
+  Definition 2 of the note.
+* A set `S` is *irrelevant* to `K` when `r (K ∪ S) = r K`.
+
+## Results
+
+* `success_le_optimum`, `exists_maximiser`: `optimum` is attained and bounds `success`.
+* `success_union_lt`: adding a non-empty irrelevant set to a context with positive
+  coverage strictly lowers success when `g` is strictly decreasing.
+* `not_superset_closed`: for a maximiser `K` and such an `S`, every `ε` below the drop
+  makes `K` ε-sufficient and `K ∪ S` not. The drop grows with `|S|`, so this is the
+  k-step statement, not a one-unit artefact.
+* `const_superset_closed`: with constant `g` and monotone coverage (the lossless reader),
+  ε-sufficiency is closed under superset for every `ε`.
+* `binCov_optimum`, `binCov_not_superset_closed`: the binary instance, with the optimum
+  computed to be `g |O|` and the Proposition specialised to it.
 -/
 
 namespace Sufficiency
 
-variable {U : Type*} [DecidableEq U]
+variable {U : Type*} [DecidableEq U] [Fintype U]
 
-/-- A bounded reader: a non-negative degradation curve over context size. -/
+/-- A bounded reader: a degradation curve over context size, valued in `[0,1]`. -/
 structure Reader where
-  /-- success as a function of context size -/
+  /-- success multiplier as a function of context size -/
   g : ℕ → ℚ
-  /-- success is a non-negative quantity -/
   nonneg : ∀ n, 0 ≤ g n
+  le_one : ∀ n, g n ≤ 1
 
-/-- Coverage-times-degradation success, with binary coverage of the oracle slice `O`. -/
-def success (R : Reader) (O K : Finset U) : ℚ :=
-  if O ⊆ K then R.g K.card else 0
+/-- A coverage function on contexts, valued in `[0,1]`. No shape is assumed. -/
+structure Coverage (U : Type*) where
+  /-- coverage of a context -/
+  r : Finset U → ℚ
+  nonneg : ∀ K, 0 ≤ r K
+  le_one : ∀ K, r K ≤ 1
 
-/-- The optimum `p*`, attained at `K = O` whenever `g` is antitone. -/
-def optimum (R : Reader) (O : Finset U) : ℚ :=
-  R.g O.card
+/-- Coverage-times-degradation success. -/
+def success (R : Reader) (C : Coverage U) (K : Finset U) : ℚ :=
+  C.r K * R.g K.card
 
-/-- `K` is ε-sufficient for oracle slice `O` under reader `R`. -/
-def sufficient (R : Reader) (ε : ℚ) (O K : Finset U) : Prop :=
-  optimum R O - ε ≤ success R O K
+/-- The optimum `p*`: the maximum of `success` over all contexts. -/
+def optimum (R : Reader) (C : Coverage U) : ℚ :=
+  (Finset.univ : Finset U).powerset.sup' (Finset.powerset_nonempty _) (success R C)
 
-/-- When `g` is antitone, no context beats `K = O`.  Justifies calling `g |O|` the optimum. -/
-theorem success_le_optimum (R : Reader) (hg : Antitone R.g) (O K : Finset U) :
-    success R O K ≤ optimum R O := by
-  unfold success optimum
-  split_ifs with h
-  · exact hg (Finset.card_le_card h)
-  · exact R.nonneg _
+/-- `K` is ε-sufficient iff its success is within `ε` of the optimum (Definition 2). -/
+def sufficient (R : Reader) (C : Coverage U) (ε : ℚ) (K : Finset U) : Prop :=
+  optimum R C - ε ≤ success R C K
 
-theorem success_self (R : Reader) (O : Finset U) : success R O O = R.g O.card := by
-  simp [success]
+/-- `S` is irrelevant to `K`: adding it does not change coverage. -/
+def Irrelevant (C : Coverage U) (K S : Finset U) : Prop :=
+  C.r (K ∪ S) = C.r K
 
-/-- The oracle slice itself is ε-sufficient for every ε ≥ 0. -/
-theorem self_sufficient (R : Reader) {ε : ℚ} (hε : 0 ≤ ε) (O : Finset U) :
-    sufficient R ε O O := by
-  unfold sufficient optimum
-  rw [success_self]
+theorem success_le_optimum (R : Reader) (C : Coverage U) (K : Finset U) :
+    success R C K ≤ optimum R C :=
+  Finset.le_sup' (success R C) (Finset.mem_powerset.mpr (Finset.subset_univ K))
+
+theorem exists_maximiser (R : Reader) (C : Coverage U) :
+    ∃ K : Finset U, success R C K = optimum R C := by
+  obtain ⟨K, -, hK⟩ := Finset.exists_mem_eq_sup' (Finset.powerset_nonempty (Finset.univ : Finset U))
+    (success R C)
+  exact ⟨K, hK.symm⟩
+
+/-- A maximiser is ε-sufficient for every `ε ≥ 0`. -/
+theorem maximiser_sufficient (R : Reader) (C : Coverage U) {K : Finset U}
+    (hmax : success R C K = optimum R C) {ε : ℚ} (hε : 0 ≤ ε) :
+    sufficient R C ε K := by
+  unfold sufficient; rw [hmax]; linarith
+
+/-- Adding a non-empty irrelevant set to a context with positive coverage strictly lowers
+success when the degradation curve is strictly decreasing. -/
+theorem success_union_lt (R : Reader) (C : Coverage U) (hg : StrictAnti R.g)
+    {K S : Finset U} (hirr : Irrelevant C K S) (hpos : 0 < C.r K) (hS : S.Nonempty)
+    (hdisj : Disjoint K S) :
+    success R C (K ∪ S) < success R C K := by
+  unfold success
+  rw [hirr, Finset.card_union_of_disjoint hdisj]
+  have hlt : R.g (K.card + S.card) < R.g K.card :=
+    hg (Nat.lt_add_of_pos_right (Finset.card_pos.mpr hS))
+  exact mul_lt_mul_of_pos_left hlt hpos
+
+/-- **Proposition (sufficiency is not closed under superset), k-step form.**
+Let `K` be a maximiser and `K'` any context whose success is strictly lower (for instance
+`K' = K ∪ S` with `S` irrelevant, by `success_union_lt`). Then for every `ε` with
+`0 ≤ ε < success K - success K'`, `K` is ε-sufficient and `K'` is not. -/
+theorem not_superset_closed (R : Reader) (C : Coverage U)
+    {K K' : Finset U} (hmax : success R C K = optimum R C)
+    {ε : ℚ} (hε0 : 0 ≤ ε) (hε : ε < success R C K - success R C K') :
+    sufficient R C ε K ∧ ¬ sufficient R C ε K' := by
+  refine ⟨maximiser_sufficient R C hmax hε0, ?_⟩
+  unfold sufficient
+  rw [← hmax]
+  intro h
   linarith
 
-/-- **Proposition (sufficiency is not closed under superset).**
-For `u ∉ O` and `0 ≤ ε < g |O| − g (|O|+1)`, `O` is ε-sufficient and `O ∪ {u}` is not. -/
-theorem not_superset_closed (R : Reader) (O : Finset U) {u : U} (hu : u ∉ O)
-    {ε : ℚ} (hε0 : 0 ≤ ε) (hε : ε < R.g O.card - R.g (O.card + 1)) :
-    sufficient R ε O O ∧ ¬ sufficient R ε O (insert u O) := by
-  refine ⟨self_sufficient R hε0 O, ?_⟩
-  unfold sufficient success optimum
-  rw [Finset.card_insert_of_notMem hu]
-  split_ifs with hs
-  · intro h
-    linarith
-  · exact absurd (Finset.subset_insert u O) hs
+/-- The hypotheses of the Proposition are jointly satisfiable for `K' = K ∪ S`: the admissible
+`ε` form a non-empty interval, since the drop is strictly positive. -/
+theorem not_superset_closed_nonvacuous (R : Reader) (C : Coverage U) (hg : StrictAnti R.g)
+    {K S : Finset U} (hmax : success R C K = optimum R C)
+    (hirr : Irrelevant C K S) (hpos : 0 < C.r K) (hS : S.Nonempty) (hdisj : Disjoint K S) :
+    ∃ ε : ℚ, 0 ≤ ε ∧ sufficient R C ε K ∧ ¬ sufficient R C ε (K ∪ S) := by
+  have hdrop := success_union_lt R C hg hirr hpos hS hdisj
+  exact ⟨0, le_rfl, not_superset_closed R C hmax le_rfl (by linarith)⟩
 
-/-- The hypothesis of the Proposition is satisfiable whenever `g` is strictly decreasing:
-`ε = 0` is a witness.  So the Proposition is not vacuous. -/
-theorem not_superset_closed_of_strictAnti (R : Reader) (hg : StrictAnti R.g)
-    (O : Finset U) {u : U} (hu : u ∉ O) :
-    ∃ ε : ℚ, 0 ≤ ε ∧ sufficient R ε O O ∧ ¬ sufficient R ε O (insert u O) := by
-  refine ⟨0, le_rfl, not_superset_closed R O hu le_rfl ?_⟩
-  have : R.g (O.card + 1) < R.g O.card := hg (Nat.lt_succ_self _)
-  linarith
-
-/-- **Lemma (the lossless case is closed under superset).**
-If `g` is constant, ε-sufficiency is preserved by taking supersets. -/
-theorem const_superset_closed (R : Reader) (c : ℚ) (hc : ∀ n, R.g n = c) {ε : ℚ}
-    (O K K' : Finset U) (hKK' : K ⊆ K') (h : sufficient R ε O K) :
-    sufficient R ε O K' := by
+omit [DecidableEq U] in
+/-- **Lemma (the lossless reader is closed under superset).**
+If `g` is constant and coverage is monotone under inclusion, then ε-sufficiency is preserved
+by supersets, for every `ε`. -/
+theorem const_superset_closed (R : Reader) (C : Coverage U) (c : ℚ) (hc : ∀ n, R.g n = c)
+    (hmono : ∀ K K' : Finset U, K ⊆ K' → C.r K ≤ C.r K') {ε : ℚ} {K K' : Finset U}
+    (hKK' : K ⊆ K') (h : sufficient R C ε K) :
+    sufficient R C ε K' := by
   have hc0 : 0 ≤ c := by rw [← hc 0]; exact R.nonneg 0
-  unfold sufficient success optimum at h ⊢
-  simp only [hc] at h ⊢
-  by_cases hO : O ⊆ K
-  · simp only [hO, ↓reduceIte] at h
-    simp only [hO.trans hKK', ↓reduceIte]
-    exact h
-  · simp only [hO, ↓reduceIte] at h
-    split_ifs
-    · linarith
-    · exact h
+  unfold sufficient success at h ⊢
+  rw [hc] at h ⊢
+  have := mul_le_mul_of_nonneg_right (hmono K K' hKK') hc0
+  linarith
+
+/-! ## The binary instance -/
+
+/-- Binary coverage of an oracle slice `O`: `1` if `O ⊆ K`, else `0`. -/
+def binCov (O : Finset U) : Coverage U where
+  r K := if O ⊆ K then 1 else 0
+  nonneg K := by split_ifs <;> norm_num
+  le_one K := by split_ifs <;> norm_num
+
+omit [Fintype U] in
+theorem binCov_success (R : Reader) (O K : Finset U) :
+    success R (binCov O) K = if O ⊆ K then R.g K.card else 0 := by
+  by_cases h : O ⊆ K <;> simp [success, binCov, h]
+
+/-- With antitone `g`, the optimum of the binary instance is `g |O|`, attained at `K = O`. -/
+theorem binCov_optimum (R : Reader) (hg : Antitone R.g) (O : Finset U) :
+    optimum R (binCov O) = R.g O.card := by
+  apply le_antisymm
+  · apply Finset.sup'_le
+    intro K _
+    rw [binCov_success]
+    split_ifs with h
+    · exact hg (Finset.card_le_card h)
+    · exact R.nonneg _
+  · have := success_le_optimum R (binCov O) O
+    rwa [binCov_success, if_pos (Finset.Subset.refl O)] at this
+
+omit [Fintype U] in
+/-- Any set disjoint from `O` is irrelevant to `O` under binary coverage. -/
+theorem binCov_irrelevant (O S : Finset U) : Irrelevant (binCov O) O S := by
+  unfold Irrelevant binCov
+  simp [Finset.subset_union_left]
+
+/-- **Proposition, binary instance.** For `S` non-empty and disjoint from `O`, and `g`
+strictly decreasing, every `ε` with `0 ≤ ε < g |O| - g (|O| + |S|)` makes `O` ε-sufficient
+and `O ∪ S` not. -/
+theorem binCov_not_superset_closed (R : Reader) (hg : StrictAnti R.g) {O S : Finset U}
+    (hS : S.Nonempty) (hdisj : Disjoint O S) {ε : ℚ} (hε0 : 0 ≤ ε)
+    (hε : ε < R.g O.card - R.g (O.card + S.card)) :
+    sufficient R (binCov O) ε O ∧ ¬ sufficient R (binCov O) ε (O ∪ S) := by
+  have hmax : success R (binCov O) O = optimum R (binCov O) := by
+    rw [binCov_optimum R hg.antitone, binCov_success, if_pos (Finset.Subset.refl O)]
+  have hpos : 0 < (binCov O).r O := by
+    unfold binCov; simp
+  have hdrop : success R (binCov O) O - success R (binCov O) (O ∪ S)
+      = R.g O.card - R.g (O.card + S.card) := by
+    rw [binCov_success, binCov_success, if_pos (Finset.Subset.refl O),
+      if_pos Finset.subset_union_left, Finset.card_union_of_disjoint hdisj]
+  exact not_superset_closed R (binCov O) hmax hε0 (by rw [hdrop]; exact hε)
 
 end Sufficiency
