@@ -39,7 +39,7 @@ def main():
     gover = run([GO, "version"], a.repo).stdout.strip().replace("go version ", "")
     med = lambda k: int(statistics.median(r[k] for r in rows))
     macros = {
-        f"{t}GoVersion": gover, f"{t}Tokenizer": tokname,
+        f"{t}GoVersion": gover, f"{t}Tokenizer": tokname.replace("_", "\\_"),
         f"{t}TotTokSrc": fmt(tot_src), f"{t}TotTokTests": fmt(tot_tst), f"{t}TotTok": fmt(tot), f"{t}NCand": len(cands),
         f"{t}MedTokW": fmt(med("tok_W")), f"{t}MedTokB": fmt(med("tok_B")), f"{t}MedTokF": fmt(med("tok_F")),
         f"{t}MedTokFt": fmt(med("tok_F_tests")), f"{t}PNinetyTokF": fmt(q([r["tok_F"] for r in rows], 0.9)),

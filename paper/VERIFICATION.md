@@ -36,6 +36,9 @@ arXiv API were used instead.
 | liskov1994behavioral | Crossref DOI 10.1145/197320.197383 | ACM TOPLAS 16(6), 1811–1841, 1994 |
 | legunsen2016extensive | Crossref DOI 10.1145/2950290.2950361 | FSE 2016, 583–594; first four authors confirmed |
 | gligoric2015practical | Crossref DOI 10.1145/2771783.2771784 | ISSTA 2015, 211–222 |
+| jimenez2023swebench | arXiv API 2310.06770 | title and first four authors confirmed; venue (ICLR 2024) not asserted |
+| ignatiev2019abduction | Crossref DOI 10.1609/aaai.v33i01.33011511 | AAAI 2019, vol. 33, 1511–1519 |
+| darwiche2020reasons | arXiv API 2002.09284 | title and both authors confirmed; venue (ECAI 2020) not asserted |
 
 Unverified references: none. Nothing is cited that is not in this table.
 The MinCtx footnote from the first draft was removed.
