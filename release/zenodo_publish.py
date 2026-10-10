@@ -13,6 +13,7 @@ def req(method, url, token, data=None, content_type="application/json", raw=Fals
     headers = {"Authorization": f"Bearer {token}"}
     if data is not None and not raw:
         data = json.dumps(data).encode("utf-8"); headers["Content-Type"] = content_type
+    # raw bucket uploads: Zenodo rejects an explicit Content-Type with 415; send none.
     r = urllib.request.Request(url, data=data, method=method, headers=headers)
     try:
         with urllib.request.urlopen(r, timeout=120) as resp:

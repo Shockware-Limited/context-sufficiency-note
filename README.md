@@ -28,4 +28,4 @@ Text and PDF: CC-BY-4.0 (`LICENSE-CC-BY-4.0`). Code, including the Lean developm
 
 ## Citing
 
-See `CITATION.cff`. A DOI will be added on release.
+Published version: **DOI [10.5281/zenodo.23282196](https://doi.org/10.5281/zenodo.23282196)**, tag `v1.0.0`. See `CITATION.cff`.
