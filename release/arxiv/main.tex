@@ -1,0 +1,158 @@
+\documentclass[10pt]{article}
+\usepackage[a4paper,margin=0.95in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{stmaryrd}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+\usepackage{microtype}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{assumption}{Assumption}
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{conjecture}{Conjecture}
+\theoremstyle{remark}
+\newtheorem{requirement}{Requirement}
+
+\newcommand{\sem}[1]{\llbracket #1 \rrbracket}
+\newcommand{\pass}{\mathsf{pass}}
+\newcommand{\eps}{\varepsilon}
+
+\title{$\eps$-Sufficient Context:\\ Definitions for Code Editing by Bounded Readers}
+\author{Jude Castiel Johansen\\ Independent researcher\\ \texttt{castiel@shockware.co.uk}\\ ORCID \href{https://orcid.org/0009-0002-5644-3073}{0009-0002-5644-3073}}
+\date{October 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Retrieving context for a language model that edits code is usually evaluated by end-task pass rate. There is no agreed definition of what context is \emph{sufficient}, and the classical notion from program slicing assumes a lossless reader for whom more context never hurts. That assumption fails for language models, whose accuracy falls as input grows. This note fixes definitions. A change request is a contract $(\Delta, D, I)$ with a frame condition. A context $K$ is \emph{$\eps$-sufficient} for an editor $A$ if $A$'s success on $K$ is within $\eps$ of its success on the best context, not on the full repository. Under a coverage-times-degradation model of the editor we prove, and mechanise in Lean~4, that $\eps$-sufficiency is not closed under superset, while it is closed under superset when the reader is lossless. We state the forward slice as a frame requirement, define \emph{context-closed} languages by three properties, and describe a planned benchmark, SuffBench, whose instances carry ground-truth minimal contexts. No experiments are reported; the purpose is to timestamp the definitions.
+\end{abstract}
+
+\section{Problem}
+
+A code change is produced by an editor from a request and some portion of the repository. When the editor is a compiler or an unhurried human, the portion can be large without penalty, and the right question is only whether it contains enough. Program slicing~\cite{weiser1984,horwitz1990} answers that question: the slice is the minimal set of statements that can affect a criterion, and any superset of a sufficient set is sufficient.
+
+When the editor is a language model, the portion is read under a budget and with attention that degrades as the input grows~\cite{liu2024lost,shi2023distracted}. More context can lower success. The slicing notion of minimality therefore targets the wrong object. The gap this note addresses is the following: no existing definition of minimal context is stated relative to a reader whose accuracy is non-monotone in input size.
+
+\section{Setting}
+
+A codebase is a graph $G=(U,E)$. $U$ is a finite set of \emph{units}, such as files, functions, or classes. $E$ is a set of typed edges, such as calls, imports, data flow, inheritance, and tests-cover. A program $P$ assigns a body to each unit. Its observable behaviour is a map $\sem{P} : X \to Y$ from inputs to outputs or traces. $\Phi$ is a set of predicates over programs, including tests, type judgements, and stated invariants. An \emph{oracle} $V \subseteq \Phi$ is the set of checks actually run on a candidate program; $V(P') = \pass$ means every check in $V$ holds of $P'$.
+
+\section{The contract}
+
+\begin{definition}[Contract]
+A change request is a triple $C = (\Delta, D, I)$ with $\Delta \subseteq \Phi$ the requested behaviour, $D \subseteq X$ the scope of inputs on which behaviour may differ, and $I \subseteq \Phi$ the invariants. A program $P'$ \emph{satisfies} $C$ relative to the current program $P$, written $P' \models C$, iff
+\begin{align*}
+\text{(a)}\quad & \forall \varphi \in \Delta.\ \varphi(P') && \text{requested behaviour}\\
+\text{(b)}\quad & \forall x \notin D.\ \sem{P'}(x) = \sem{P}(x) && \text{frame: nothing else changes}\\
+\text{(c)}\quad & \forall \varphi \in I.\ \varphi(P) \Rightarrow \varphi(P') && \text{invariants preserved.}
+\end{align*}
+\end{definition}
+
+$C$ is \emph{well-defined} iff some $P'$ satisfies it, and \emph{precise} iff any two satisfying programs agree on $D$. Imprecision is the formal name for an ambiguous request. Condition~(b) is the frame condition in the sense of Borgida, Mylopoulos and Reiter~\cite{borgida1995frame} and of the frame rule in separation logic~\cite{ohearn2001local}. It is the condition most specifications omit and the one that context reduction endangers.
+
+\section{Sufficiency for a bounded, stochastic editor}
+
+A \emph{context} is a subset $K \subseteq U$. An \emph{editor} $A$ maps a contract and a context to a probability distribution over edits; an edit rewrites a write-set $W \subseteq K$ and yields a program $A(C,K)(P)$. We write the editor's success rate as
+\[
+p_A(K, C) \;=\; \Pr\big[\, V\big(A(C,K)(P)\big) = \pass \,\big],
+\qquad
+p^*_A(C) \;=\; \max_{K \subseteq U} p_A(K, C).
+\]
+
+\begin{definition}[$\eps$-sufficient context]
+$K$ is \emph{$(\eps, A)$-sufficient} for $C$ iff $p_A(K, C) \geq p^*_A(C) - \eps$. Given a cost function on contexts, $K$ is \emph{minimal} iff it is sufficient and no $K'$ with $\mathrm{cost}(K') < \mathrm{cost}(K)$ is sufficient.
+\end{definition}
+
+Three points distinguish this from the slicing notion. The editor is a distribution, not a function, so sufficiency is a tolerance. The comparison is to the best context, not to the full repository, because the full repository may itself be a poor choice. And nothing in the definition makes sufficiency closed under superset.
+
+\begin{assumption}[Coverage and degradation]
+\label{as:factor}
+There is an \emph{oracle slice} $O(C) \subseteq U$, the units whose contents determine the verdict of $V$ on the change, and the editor's success factors as
+\[
+p_A(K, C) \;=\; r(K, C)\cdot g_A(\mathrm{load}(K)),
+\]
+where $r(K,C) \in [0,1]$ is coverage of the oracle slice, in the simplest form $r = 1$ if $O(C) \subseteq K$ and $0$ otherwise, and $g_A$ is the reader's \emph{degradation curve}, a non-increasing function of context load.
+\end{assumption}
+
+Coverage is a property of the repository and the contract. The degradation curve is a property of the model, estimable once per model with planted-fact experiments independent of any codebase. Under the assumption, the optimum is the smallest superset of the oracle slice, and sufficiency reduces to two checks: coverage holds, and degradation at that load is within $\eps$.
+
+The tolerance $\eps$ cannot be removed. The editor is stochastic, so no context gives certainty. The degradation curve is estimated from $n$ samples, contributing a statistical term of order $\sqrt{\ln(1/\delta)/(2n)}$ by Hoeffding's inequality. And the oracle $V$ is incomplete: tests passing is not correctness. The third term is unmeasurable and should always be reported as such.
+
+\section{Non-monotonicity}
+
+We make Assumption~\ref{as:factor} concrete in its simplest form and show that sufficiency is not closed under superset, in contrast with the lossless case. Both statements are mechanised in Lean~4 with Mathlib.\footnote{File \texttt{sufficiency/Sufficiency/NonMonotonic.lean} at commit \texttt{f905ff9e1e9d} of \url{https://github.com/Shockware-Limited/context-sufficiency-note}. The development has no \texttt{sorry}.}
+
+Fix a finite type of units, an oracle slice $O$, and a degradation curve $g : \mathbb{N} \to \mathbb{Q}$ with $g \geq 0$. Define $p(K) = g(|K|)$ if $O \subseteq K$ and $p(K) = 0$ otherwise. If $g$ is non-increasing then $p(K) \leq g(|O|)$ for every $K$, with equality at $K = O$, so $p^* = g(|O|)$. Say $K$ is $\eps$-sufficient iff $p(K) \geq g(|O|) - \eps$.
+
+\begin{proposition}[Sufficiency is not closed under superset]
+Let $g$ be strictly decreasing. For every unit $u \notin O$ and every $\eps$ with $0 \leq \eps < g(|O|) - g(|O|+1)$, the context $O$ is $\eps$-sufficient and the context $O \cup \{u\}$ is not.
+\end{proposition}
+\begin{proof}
+$O \subseteq O$, so $p(O) = g(|O|) \geq g(|O|) - \eps$ because $\eps \geq 0$. For $K' = O \cup \{u\}$ with $u \notin O$ we have $O \subseteq K'$ and $|K'| = |O| + 1$, so $p(K') = g(|O|+1) < g(|O|) - \eps$ by the bound on $\eps$. Hence $K'$ is not $\eps$-sufficient.
+\end{proof}
+
+\begin{lemma}[The lossless case is closed under superset]
+Let $g$ be constant with value $c \geq 0$. If $K$ is $\eps$-sufficient and $K \subseteq K'$, then $K'$ is $\eps$-sufficient.
+\end{lemma}
+\begin{proof}
+If $\eps \geq c$ every context is sufficient. Otherwise $p(K) \geq c - \eps > 0$ forces $O \subseteq K \subseteq K'$, so $p(K') = c \geq c - \eps$.
+\end{proof}
+
+The pair is the point. The classical reader makes sufficiency monotone and minimality a matter of removing what is unnecessary. The bounded reader makes adding the unnecessary a failure mode, so minimality becomes an optimisation with a cost that is non-monotone in benefit.
+
+\section{The forward slice as a frame requirement}
+
+Let $W$ be the write-set of an edit. The \emph{backward slice} of $W$ is the set of units $W$ depends on, through calls, imports, and data flow. The \emph{forward slice} of $W$ is the set of units that depend on $W$. Retrieval for code editors has concentrated on the backward slice: what the edit site reads and calls~\cite{shrivastava2023repo,zhang2023repocoder,xia2025agentless,bairi2024codeplan}.
+
+Condition~(b) of the contract can be violated only through the forward slice. A unit that neither depends on $W$ nor is in $W$ has the same body and the same dependencies before and after the edit, so its behaviour is unchanged. Every frame violation therefore lives in a dependent of $W$, and the tests that would catch it are the tests bound to those dependents, as in safe regression test selection~\cite{rothermel1997safe} and change impact analysis~\cite{ren2004chianti}.
+
+\begin{requirement}[Forward slice]
+A context selector that omits the dependents of $W$ cannot witness a violation of condition~(b). Any claim that an edit produced from such a context satisfies the contract rests entirely on the oracle, not on the context.
+\end{requirement}
+
+This is stated as a requirement and not a theorem because it depends on the dependency relation being exact. In languages with reflection, dynamic dispatch, or duck typing, the static forward slice under-approximates the true one, and the requirement can be met in appearance but not in fact.
+
+\section{Context-closed languages}
+
+Semantic sufficiency is undecidable in general. It becomes decidable when the language restricts programs so that the quantities above are graph queries. We state three properties as conjectures to be proved for a core calculus; the calculus itself is future work and no language is named here. Write $\mathrm{spec}(v)$ for the declared interface of unit $v$, including its contract and effects, and $\mathrm{deps}(u)$ for the units $u$ depends on.
+
+\begin{conjecture}[P1, interface determinacy]
+$\sem{u} = F\big(\mathrm{body}(u), \{\mathrm{spec}(v) : v \in \mathrm{deps}(u)\}\big)$ for some fixed $F$. The meaning of a unit depends on its dependencies only through their interfaces.
+\end{conjecture}
+\begin{conjecture}[P2, spec-bounded reliance]
+If an edit to $u$ leaves $\mathrm{spec}(u)$ unchanged and the new body satisfies $\mathrm{spec}(u)$, then the verdict of $V$ on every other unit is unchanged.
+\end{conjecture}
+\begin{conjecture}[P3, computable sufficiency]
+For a contract $C$ with write-set $W$, the context
+\[
+K^* = W \,\cup\, \{\mathrm{spec}(v) : v \in \mathrm{deps}(W)\} \,\cup\, \{u \in \mathrm{dependents}(W) : \mathrm{spec}(W)\ \text{changes}\} \,\cup\, \text{tests bound to the above}
+\]
+satisfies the coverage condition of Assumption~\ref{as:factor} by construction, and is computable in time linear in $|G|$.
+\end{conjecture}
+
+\begin{definition}[Context-closed]
+A language is \emph{context-closed} iff P1, P2 and P3 hold of all its programs.
+\end{definition}
+
+In a context-closed language the backward slice stops at one hop of interfaces, the forward slice is provably empty when the interface is preserved, and the undecidable part of sufficiency disappears. The tolerance $\eps$ then measures only the editor's degradation, never the graph. Individually, the ingredients exist: declared contracts, declared effects, content-addressed definitions, acyclic modules, and language-independent slicing by observation~\cite{binkley2014orbs}. The property is what is new.
+
+\section{Proposed benchmark}
+
+We reserve the name \emph{SuffBench} for a benchmark whose instances are tuples (repository snapshot, contract $C$ derived from a fail-to-pass commit, gold write-set, oracle slice $O$). The oracle slice is to be computed by observation: stub each unit outside the gold write-set, rebuild, rerun the checks in $V$, and retain the unit iff the verdict changes, with delta debugging to reduce the number of builds. Instances must postdate the training cutoff of any evaluated model.
+
+The dataset labels \emph{verification} sufficiency: what determines the verdict. Experiments measure \emph{generation} success: whether an editor given $K$ produces a passing edit. The two must not be conflated. Any claim of the form ``less context without loss'' is to be stated as ``within $\eps$ of the best observed pass rate under oracle $V$'' with the oracle residual reported as unmeasured. Nothing is released with this note.
+
+\section{Related work}
+
+Slicing~\cite{weiser1984,horwitz1990} and its language-independent, observation-based form~\cite{binkley2014orbs} define minimal context for a lossless consumer. The frame condition appears as a specification problem in~\cite{borgida1995frame} and as a proof rule in~\cite{ohearn2001local}. Safe regression test selection~\cite{rothermel1997safe} and change impact analysis~\cite{ren2004chianti} compute which checks a change can affect, which is the forward-slice half of the contract. For language-model editors, context is selected by learned prompt proposals~\cite{shrivastava2023repo}, iterative retrieval~\cite{zhang2023repocoder}, simple localisation~\cite{xia2025agentless}, and dependency-graph planning~\cite{bairi2024codeplan}; none states a sufficiency criterion, and all compare against task pass rate. That more context can hurt a language model is established empirically~\cite{liu2024lost,shi2023distracted} but has not been carried into a definition of minimal context.\footnote{A small open-source project named MinCtx, by Zane Yuan on GitHub, carries the slogan ``minimum context, equivalent outcome''; it is adjacent in aim but offers no formal treatment.} The gap, restated: no prior definition of minimal context is relative to a reader whose accuracy is non-monotone in input size.
+
+{\small
+\bibliographystyle{plain}
+\bibliography{refs}
+}
+
+\end{document}

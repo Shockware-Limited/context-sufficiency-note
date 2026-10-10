@@ -1,6 +1,7 @@
 \documentclass[10pt]{article}
 \usepackage[a4paper,margin=0.95in]{geometry}
 \usepackage{amsmath,amssymb,amsthm}
+\usepackage{stmaryrd}
 \usepackage[hidelinks]{hyperref}
 \usepackage{url}
 \usepackage{microtype}
@@ -16,13 +17,11 @@
 \newtheorem{requirement}{Requirement}
 
 \newcommand{\sem}[1]{\llbracket #1 \rrbracket}
-\usepackage{stmaryrd}
-\newcommand{\Suff}{\mathrm{Suff}}
 \newcommand{\pass}{\mathsf{pass}}
 \newcommand{\eps}{\varepsilon}
 
 \title{$\eps$-Sufficient Context:\\ Definitions for Code Editing by Bounded Readers}
-uthor{Jude Castiel Johansen\ Independent researcher\ 	exttt{castiel@shockware.co.uk}\ ORCID \href{https://orcid.org/0009-0002-5644-3073}{0009-0002-5644-3073}}
+\author{Jude Castiel Johansen\\ Independent researcher\\ \texttt{castiel@shockware.co.uk}\\ ORCID \href{https://orcid.org/0009-0002-5644-3073}{0009-0002-5644-3073}}
 \date{October 2026}
 
 \begin{document}
@@ -85,7 +84,7 @@ The tolerance $\eps$ cannot be removed. The editor is stochastic, so no context 
 
 \section{Non-monotonicity}
 
-We make Assumption~\ref{as:factor} concrete in its simplest form and show that sufficiency is not closed under superset, in contrast with the lossless case. Both statements are mechanised in Lean~4 with Mathlib.\footnote{File \texttt{sufficiency/Sufficiency/NonMonotonic.lean} at commit \texttt{} of \url{https://github.com/Shockware-Limited/context-sufficiency-note}. The development has no \texttt{sorry}.}
+We make Assumption~\ref{as:factor} concrete in its simplest form and show that sufficiency is not closed under superset, in contrast with the lossless case. Both statements are mechanised in Lean~4 with Mathlib.\footnote{File \texttt{sufficiency/Sufficiency/NonMonotonic.lean} at commit \texttt{f905ff9e1e9d} of \url{https://github.com/Shockware-Limited/context-sufficiency-note}. The development has no \texttt{sorry}.}
 
 Fix a finite type of units, an oracle slice $O$, and a degradation curve $g : \mathbb{N} \to \mathbb{Q}$ with $g \geq 0$. Define $p(K) = g(|K|)$ if $O \subseteq K$ and $p(K) = 0$ otherwise. If $g$ is non-increasing then $p(K) \leq g(|O|)$ for every $K$, with equality at $K = O$, so $p^* = g(|O|)$. Say $K$ is $\eps$-sufficient iff $p(K) \geq g(|O|) - \eps$.
 
@@ -130,7 +129,7 @@ If an edit to $u$ leaves $\mathrm{spec}(u)$ unchanged and the new body satisfies
 \begin{conjecture}[P3, computable sufficiency]
 For a contract $C$ with write-set $W$, the context
 \[
-K^* = W \;\cup\; \{\mathrm{spec}(v) : v \in \mathrm{deps}(W)\} \;\cup\; \{u \in \mathrm{dependents}(W) : \mathrm{spec}(W)\ \text{changes}\} \;\cup\; \text{tests bound to the above}
+K^* = W \,\cup\, \{\mathrm{spec}(v) : v \in \mathrm{deps}(W)\} \,\cup\, \{u \in \mathrm{dependents}(W) : \mathrm{spec}(W)\ \text{changes}\} \,\cup\, \text{tests bound to the above}
 \]
 satisfies the coverage condition of Assumption~\ref{as:factor} by construction, and is computable in time linear in $|G|$.
 \end{conjecture}
@@ -151,7 +150,9 @@ The dataset labels \emph{verification} sufficiency: what determines the verdict.
 
 Slicing~\cite{weiser1984,horwitz1990} and its language-independent, observation-based form~\cite{binkley2014orbs} define minimal context for a lossless consumer. The frame condition appears as a specification problem in~\cite{borgida1995frame} and as a proof rule in~\cite{ohearn2001local}. Safe regression test selection~\cite{rothermel1997safe} and change impact analysis~\cite{ren2004chianti} compute which checks a change can affect, which is the forward-slice half of the contract. For language-model editors, context is selected by learned prompt proposals~\cite{shrivastava2023repo}, iterative retrieval~\cite{zhang2023repocoder}, simple localisation~\cite{xia2025agentless}, and dependency-graph planning~\cite{bairi2024codeplan}; none states a sufficiency criterion, and all compare against task pass rate. That more context can hurt a language model is established empirically~\cite{liu2024lost,shi2023distracted} but has not been carried into a definition of minimal context.\footnote{A small open-source project named MinCtx, by Zane Yuan on GitHub, carries the slogan ``minimum context, equivalent outcome''; it is adjacent in aim but offers no formal treatment.} The gap, restated: no prior definition of minimal context is relative to a reader whose accuracy is non-monotone in input size.
 
+{\small
 \bibliographystyle{plain}
 \bibliography{refs}
+}
 
 \end{document}
