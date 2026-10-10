@@ -2,6 +2,7 @@
 \usepackage[a4paper,margin=0.95in]{geometry}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{stmaryrd}
+\PassOptionsToPackage{hyphens}{url}
 \usepackage[hidelinks]{hyperref}
 \usepackage{url}
 \usepackage{microtype}
@@ -84,7 +85,7 @@ The tolerance $\eps$ cannot be removed. The editor is stochastic, so no context 
 
 \section{Non-monotonicity}
 
-We make Assumption~\ref{as:factor} concrete in its simplest form and show that sufficiency is not closed under superset, in contrast with the lossless case. Both statements are mechanised in Lean~4 with Mathlib.\footnote{Repository \url{https://github.com/Shockware-Limited/context-sufficiency-note}, file \texttt{sufficiency/Sufficiency/NonMonotonic.lean}, commit \texttt{f905ff9e1e9d}. The development contains no \texttt{sorry}.}
+We make Assumption~\ref{as:factor} concrete in its simplest form and show that sufficiency is not closed under superset, in contrast with the lossless case. Both statements are mechanised in Lean~4 with Mathlib.\footnote{File \texttt{sufficiency/Sufficiency/NonMonotonic.lean}, commit \texttt{f905ff9e1e9d}, in the repository below. The development contains no \texttt{sorry}.\\ \url{https://github.com/Shockware-Limited/context-sufficiency-note}}
 
 Fix a finite type of units, an oracle slice $O$, and a degradation curve $g : \mathbb{N} \to \mathbb{Q}$ with $g \geq 0$. Define $p(K) = g(|K|)$ if $O \subseteq K$ and $p(K) = 0$ otherwise. If $g$ is non-increasing then $p(K) \leq g(|O|)$ for every $K$, with equality at $K = O$, so $p^* = g(|O|)$. Say $K$ is $\eps$-sufficient iff $p(K) \geq g(|O|) - \eps$.
 
