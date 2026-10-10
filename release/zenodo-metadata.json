@@ -3,12 +3,12 @@
     "title": "ε-Sufficient Context for Bounded Readers: Definitions and a Non-Monotonicity Result for Code Editing",
     "upload_type": "publication",
     "publication_type": "preprint",
-    "publication_date": "2026-10-11",
+    "publication_date": "2026-10-10",
     "description": "<p>Context retrieval for a language model that edits code is evaluated almost entirely by end-task pass rate. There is no agreed definition of what context is sufficient, and the natural baselines, program slicing and the principle of total evidence, assume a reader for whom more information never hurts. Language models are not such readers: their accuracy falls as input grows. This note fixes definitions that take that into account. A change request is a contract (Δ, D, I) with an explicit frame condition and an oracle that approximates it. A context K is ε-sufficient for an editor A when A's success on K is within ε of its success on the best context in a stated candidate family, not on the full repository. Under a stylised coverage-times-degradation model we prove, and mechanise in Lean 4, that ε-sufficiency is not closed under superset, with a drop that grows with the amount of irrelevant material, while it is closed under superset for a lossless reader. We state the forward slice as a requirement on the oracle, give three design properties that would make the minimal context computable, and report a mutation-based measurement on a real Go repository of how often a body-only change is caught only by tests outside the changed package, together with the token cost of including them. Finally we describe a planned benchmark, SuffBench, whose instances carry observation-based oracle slices. No language-model experiments are reported.</p>",
     "creators": [
       {
         "name": "Johansen, Jude Castiel",
-        "affiliation": "Independent researcher",
+        "affiliation": "Shockware Limited, independent researcher",
         "orcid": "0009-0002-5644-3073"
       }
     ],
@@ -30,9 +30,22 @@
         "relation": "isSupplementedBy",
         "resource_type": "software",
         "scheme": "url"
+      },
+      {
+        "identifier": "https://github.com/Shockware-Limited/suffbench",
+        "relation": "references",
+        "resource_type": "other",
+        "scheme": "url"
       }
     ],
-    "version": "1.0.0",
-    "language": "eng"
+    "version": "1.1.0",
+    "language": "eng",
+    "contributors": [
+      {
+        "name": "Shockware Limited",
+        "type": "HostingInstitution"
+      }
+    ],
+    "notes": "Version 1.1 adds citations to and positioning against work on context for coding agents that appeared April to August 2026, and points to the public SuffBench specification. Definitions, proofs, and measurements are unchanged from version 1.0."
   }
 }

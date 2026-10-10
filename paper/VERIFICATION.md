@@ -40,5 +40,25 @@ arXiv API were used instead.
 | ignatiev2019abduction | Crossref DOI 10.1609/aaai.v33i01.33011511 | AAAI 2019, vol. 33, 1511–1519 |
 | darwiche2020reasons | arXiv API 2002.09284 | title and both authors confirmed; venue (ECAI 2020) not asserted |
 
+Added in version 1.1 (all verified against the arXiv API on 2026-10-10; title and first-listed authors confirmed, "and others" where the full list was not confirmed; no venue asserted):
+
+| Key | arXiv | Title confirmed |
+|---|---|---|
+| sambodden2026context | 2607.09691 | What Context Does a Coding Agent Actually Need to Act? |
+| xue2026contextrot | 2607.17937 | When and How Context Rot Appears in Coding Agents |
+| mohammadi2026workingset | 2608.16630 | The Working Set of a Coding Agent: Coherence Debt in Repository-Scale Tasks |
+| qin2026agentretrieval | 2607.24882 | Agent Retrieval Bench |
+| li2026contextbench | 2602.05892 | ContextBench |
+| feng2026compression | 2604.13725 | On the Effectiveness of Context Compression for Repository-Level Tasks |
+| wang2026swepruner | 2607.18213 | SWE-Pruner Pro |
+| chen2026gateways | 2609.22114 | An Empirical Cost Attribution of Context-Compression Gateways |
+| alonso2026tdad | 2603.17973 | TDAD: Test-Driven Agentic Development |
+| jia2026compressing | 2603.28119 | Compressing Code Context for LLM-based Issue Resolution |
+| zhang2024hcp | 2406.18294 | Hierarchical Context Pruning |
+| du2025length | 2510.05381 | Context Length Alone Hurts LLM Performance Despite Perfect Retrieval |
+| rando2025longcodebench | 2505.07897 | LongCodeBench |
+| zan2025multiswebench | 2504.02605 | Multi-SWE-bench |
+| bjarnason2026randomness | 2602.07150 | On Randomness in Agentic Evals |
+
 Unverified references: none. Nothing is cited that is not in this table.
 The MinCtx footnote from the first draft was removed.

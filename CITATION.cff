@@ -7,9 +7,9 @@ authors:
     given-names: Jude Castiel
     email: castiel@shockware.co.uk
     orcid: https://orcid.org/0009-0002-5644-3073
-    affiliation: Independent researcher
+    affiliation: Shockware Limited, independent researcher
 date-released: 2026-10-11
-version: 1.0.0
+version: 1.1.0
 doi: 10.5281/zenodo.23282196
 license: CC-BY-4.0
 repository-code: https://github.com/Shockware-Limited/context-sufficiency-note
