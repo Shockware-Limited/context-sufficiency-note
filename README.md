@@ -1,6 +1,6 @@
 # ε-Sufficient Context for Bounded Readers: Definitions and a Non-Monotonicity Result for Code Editing
 
-Jude Castiel Johansen, Independent researcher. ORCID 0009-0002-5644-3073.
+Jude Castiel Johansen, Shockware Limited, independent researcher. ORCID 0009-0002-5644-3073.
 
 A short note fixing definitions for *context sufficiency* when the editor is a
 language model whose accuracy falls as input grows. It defines the change contract
@@ -28,4 +28,4 @@ Text and PDF: CC-BY-4.0 (`LICENSE-CC-BY-4.0`). Code, including the Lean developm
 
 ## Citing
 
-Published version: **DOI [10.5281/zenodo.23282196](https://doi.org/10.5281/zenodo.23282196)**, tag `v1.0.0`. See `CITATION.cff`.
+Concept DOI (all versions): **[10.5281/zenodo.23282195](https://doi.org/10.5281/zenodo.23282195)**. Version 1.1 (current): [10.5281/zenodo.23282824](https://doi.org/10.5281/zenodo.23282824), tag `v1.1.0`. Version 1.0: [10.5281/zenodo.23282196](https://doi.org/10.5281/zenodo.23282196), tag `v1.0.0`. SuffBench specification: [10.5281/zenodo.23282863](https://doi.org/10.5281/zenodo.23282863). See `CITATION.cff`.
