@@ -11,3 +11,4 @@ depends only on `propext`, `Classical.choice`, and `Quot.sound`. -/
 #print axioms Sufficiency.const_superset_closed
 #print axioms Sufficiency.binCov_optimum
 #print axioms Sufficiency.binCov_not_superset_closed
+#print axioms Sufficiency.prop1

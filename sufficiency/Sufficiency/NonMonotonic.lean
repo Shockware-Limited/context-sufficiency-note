@@ -9,7 +9,8 @@ import Mathlib
 # Non-monotonicity of ε-sufficient context
 
 Mechanisation of Section 5 of
-"ε-Sufficient Context: Definitions for Code Editing by Bounded Readers".
+"ε-Sufficient Context for Bounded Readers: Definitions and a Non-Monotonicity Result for
+Code Editing".
 
 ## Model
 
@@ -184,5 +185,47 @@ theorem binCov_not_superset_closed (R : Reader) (hg : StrictAnti R.g) {O S : Fin
     rw [binCov_success, binCov_success, if_pos (Finset.Subset.refl O),
       if_pos Finset.subset_union_left, Finset.card_union_of_disjoint hdisj]
   exact not_superset_closed R (binCov O) hmax hε0 (by rw [hdrop]; exact hε)
+
+/-! ## Proposition 1 exactly as stated in the note, and a concrete witness -/
+
+/-- **Proposition 1 (note, Section 5).** Under the stated hypotheses: success strictly drops,
+the drop equals `r(K) · (g|K| − g(|K|+|S|))`, and every `ε` in `[0, drop)` separates `K`
+(ε-sufficient) from `K ∪ S` (not ε-sufficient). Load is `|K|` and values are in `ℚ`. -/
+theorem prop1 (R : Reader) (C : Coverage U) (hg : StrictAnti R.g)
+    {K S : Finset U} (hmax : success R C K = optimum R C)
+    (hirr : Irrelevant C K S) (hpos : 0 < C.r K) (hS : S.Nonempty) (hdisj : Disjoint K S) :
+    success R C (K ∪ S) < success R C K ∧
+    success R C K - success R C (K ∪ S) = C.r K * (R.g K.card - R.g (K.card + S.card)) ∧
+    ∀ ε : ℚ, 0 ≤ ε → ε < C.r K * (R.g K.card - R.g (K.card + S.card)) →
+      sufficient R C ε K ∧ ¬ sufficient R C ε (K ∪ S) := by
+  have hdrop : success R C K - success R C (K ∪ S)
+      = C.r K * (R.g K.card - R.g (K.card + S.card)) := by
+    unfold success
+    rw [hirr, Finset.card_union_of_disjoint hdisj]
+    ring
+  refine ⟨success_union_lt R C hg hirr hpos hS hdisj, hdrop, fun ε hε0 hε => ?_⟩
+  exact not_superset_closed R C hmax hε0 (by rw [hdrop]; exact hε)
+
+/-- The harmonic reader `g n = 1/(n+1)`: a concrete strictly decreasing curve in `[0,1]`. -/
+def harmonic : Reader where
+  g n := 1 / ((n : ℚ) + 1)
+  nonneg n := by positivity
+  le_one n := by
+    rw [div_le_one (by positivity)]
+    linarith [(Nat.cast_nonneg n : (0 : ℚ) ≤ n)]
+
+theorem harmonic_strictAnti : StrictAnti harmonic.g := by
+  intro a b hab
+  simp only [harmonic]
+  apply one_div_lt_one_div_of_lt (by positivity)
+  have : (a : ℚ) < b := by exact_mod_cast hab
+  linarith
+
+/-- Concrete witness: two units, oracle slice `{0}`, harmonic reader, `ε = 0`.
+`{0}` is 0-sufficient and `{0} ∪ {1}` is not. The hypotheses are jointly satisfiable. -/
+example : sufficient harmonic (binCov ({0} : Finset (Fin 2))) 0 {0} ∧
+    ¬ sufficient harmonic (binCov ({0} : Finset (Fin 2))) 0 ({0} ∪ {1}) :=
+  binCov_not_superset_closed harmonic harmonic_strictAnti (Finset.singleton_nonempty 1)
+    (by decide) le_rfl (by simp [harmonic]; norm_num)
 
 end Sufficiency
