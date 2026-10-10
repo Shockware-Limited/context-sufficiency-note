@@ -1,0 +1,20 @@
+name: build
+on: [push, pull_request]
+jobs:
+  paper:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: wtfjoke/setup-tectonic@v3
+      - run: cd paper && tectonic main.tex
+      - uses: actions/upload-artifact@v4
+        with: { name: paper, path: paper/main.pdf }
+  lean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: sufficiency
+          use-mathlib-cache: true
+      - run: '! grep -rn "sorry" sufficiency/Sufficiency'

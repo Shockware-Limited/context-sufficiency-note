@@ -1,0 +1,54 @@
+{
+ "weiser1984": {
+  "query": "Program Slicing",
+  "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+ },
+ "horwitz1990": {
+  "query": "Interprocedural Slicing Using Dependence Graphs",
+  "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+ },
+ "binkley2014orbs": {
+  "query": "ORBS: language-independent program slicing",
+  "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+ },
+ "ohearn2001local": {
+  "query": "Local Reasoning about Programs that Alter Data Structures",
+  "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+ },
+ "borgida1995frame": {
+  "query": "On the Frame Problem in Procedure Specifications",
+  "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+ },
+ "rothermel1997safe": {
+  "query": "A Safe, Efficient Regression Test Selection Technique",
+  "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+ },
+ "ren2004chianti": {
+  "query": "Chianti: a tool for change impact analysis of java programs",
+  "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+ },
+ "bairi2024codeplan": {
+  "query": "CodePlan: Repository-Level Coding using LLMs and Planning",
+  "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+ },
+ "shrivastava2023repo": {
+  "query": "Repository-Level Prompt Generation for Large Language Models of Code",
+  "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+ },
+ "zhang2023repocoder": {
+  "query": "RepoCoder: Repository-Level Code Completion Through Iterative Retrieval and Generation",
+  "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+ },
+ "xia2024agentless": {
+  "query": "Agentless: Demystifying LLM-based Software Engineering Agents",
+  "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+ },
+ "liu2024lost": {
+  "query": "Lost in the Middle: How Language Models Use Long Contexts",
+  "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+ },
+ "shi2023distracted": {
+  "query": "Large Language Models Can Be Easily Distracted by Irrelevant Context",
+  "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+ }
+}
