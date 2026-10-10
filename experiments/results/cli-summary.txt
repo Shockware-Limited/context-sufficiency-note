@@ -1,0 +1,32 @@
+wrote ..\paper\results-cli.tex
+  cliCorpusCommit  ec5b512045db
+  cliNPkgs         310
+  cliNTestPkgs     237
+  cliNBaseFail     13
+  cliNMut          120
+  cliNCompile      118
+  cliNTimeout      0
+  cliNDet          72
+  cliNFlaky        0
+  cliPctDet        61\% [52, 69]
+  cliPctW          92\% [83, 96]
+  cliPctFonly      8\% [4, 17]
+  cliPctOther      0\% [0, 5]
+  cliNOverlap      10
+  cliNDetWt        69
+  cliPctFonlyWt    4\% [1, 12]
+  cliNDetNt        3
+  cliPctFonlyNt    100\% [44, 100]
+classes: {'undetected': 46, 'W': 66, 'nocompile': 2, 'Fonly': 6}
+per operator: n / detected / W / Fonly / other
+   binop       30  22  21   1   0
+   str+x       53  20  19   1   0
+   int+1        6   5   5   0   0
+   negate-if   29  25  21   4   0
+Fonly / otheronly mutants (pkg -> failing pkgs):
+   [Fonly] github.com/cli/cli/v2/pkg/ssh -> ['github.com/cli/cli/v2/pkg/cmd/auth/shared']
+   [Fonly] github.com/cli/cli/v2/internal/docs -> ['github.com/cli/cli/v2/cmd/gen-docs']
+   [Fonly] github.com/cli/cli/v2/internal/codespaces/rpc/ssh -> ['github.com/cli/cli/v2/internal/codespaces/rpc']
+   [Fonly] github.com/cli/cli/v2/pkg/cmd/workflow/shared -> ['github.com/cli/cli/v2/pkg/cmd/run/list', 'github.com/cli/cli/v2/pkg/cmd/workflow/disable', 'github.com/cli/cli/v2/pkg/cmd/workflow/enable', 'github.com/cli/cli/v2/pkg/cmd/workflow/run']
+   [Fonly] github.com/cli/cli/v2/internal/browser -> ['github.com/cli/cli/v2/pkg/cmd/agent-task/list', 'github.com/cli/cli/v2/pkg/cmd/browse', 'github.com/cli/cli/v2/pkg/cmd/discussion/list', 'github.com/cli/cli/v2/pkg/cmd/discussion/view']
+   [Fonly] github.com/cli/cli/v2/pkg/cmd/ssh-key/shared -> ['github.com/cli/cli/v2/pkg/cmd/ssh-key/list']
