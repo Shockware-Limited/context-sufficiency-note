@@ -17,4 +17,22 @@ jobs:
         with:
           lake-package-directory: sufficiency
           use-mathlib-cache: true
-      - run: '! grep -rn "sorry" sufficiency/Sufficiency'
+      - name: no sorry / admit / native_decide
+        run: '! grep -rnE "sorry|admit|native_decide" sufficiency/Sufficiency'
+      - name: axiom audit
+        run: |
+          cd sufficiency
+          lake env lean Axioms.lean | tee axioms.txt
+          python3 - <<'PY'
+          import re
+          ok = {"propext", "Classical.choice", "Quot.sound"}
+          bad = False
+          for line in open("axioms.txt"):
+              m = re.search(r"depends on axioms: \[(.*)\]", line)
+              if m:
+                  used = {a.strip() for a in m.group(1).split(",") if a.strip()}
+                  extra = used - ok
+                  if extra:
+                      print("UNEXPECTED AXIOMS:", line.strip()); bad = True
+          raise SystemExit(1 if bad else 0)
+          PY
