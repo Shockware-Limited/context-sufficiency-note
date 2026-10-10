@@ -84,7 +84,7 @@ The tolerance $\eps$ cannot be removed. The editor is stochastic, so no context 
 
 \section{Non-monotonicity}
 
-We make Assumption~\ref{as:factor} concrete in its simplest form and show that sufficiency is not closed under superset, in contrast with the lossless case. Both statements are mechanised in Lean~4 with Mathlib.\footnote{File \texttt{sufficiency/Sufficiency/NonMonotonic.lean} at commit \texttt{f905ff9e1e9d} of \url{https://github.com/Shockware-Limited/context-sufficiency-note}. The development has no \texttt{sorry}.}
+We make Assumption~\ref{as:factor} concrete in its simplest form and show that sufficiency is not closed under superset, in contrast with the lossless case. Both statements are mechanised in Lean~4 with Mathlib.\footnote{Repository \url{https://github.com/Shockware-Limited/context-sufficiency-note}, file \texttt{sufficiency/Sufficiency/NonMonotonic.lean}, commit \texttt{f905ff9e1e9d}. The development contains no \texttt{sorry}.}
 
 Fix a finite type of units, an oracle slice $O$, and a degradation curve $g : \mathbb{N} \to \mathbb{Q}$ with $g \geq 0$. Define $p(K) = g(|K|)$ if $O \subseteq K$ and $p(K) = 0$ otherwise. If $g$ is non-increasing then $p(K) \leq g(|O|)$ for every $K$, with equality at $K = O$, so $p^* = g(|O|)$. Say $K$ is $\eps$-sufficient iff $p(K) \geq g(|O|) - \eps$.
 
@@ -128,9 +128,10 @@ If an edit to $u$ leaves $\mathrm{spec}(u)$ unchanged and the new body satisfies
 \end{conjecture}
 \begin{conjecture}[P3, computable sufficiency]
 For a contract $C$ with write-set $W$, the context
-\[
-K^* = W \,\cup\, \{\mathrm{spec}(v) : v \in \mathrm{deps}(W)\} \,\cup\, \{u \in \mathrm{dependents}(W) : \mathrm{spec}(W)\ \text{changes}\} \,\cup\, \text{tests bound to the above}
-\]
+\begin{align*}
+K^* = {} & W \;\cup\; \{\mathrm{spec}(v) : v \in \mathrm{deps}(W)\}\\
+& {} \cup\; \{u \in \mathrm{dependents}(W) : \mathrm{spec}(W)\ \text{changes}\} \;\cup\; \text{tests bound to the above}
+\end{align*}
 satisfies the coverage condition of Assumption~\ref{as:factor} by construction, and is computable in time linear in $|G|$.
 \end{conjecture}
 
@@ -144,7 +145,7 @@ In a context-closed language the backward slice stops at one hop of interfaces, 
 
 We reserve the name \emph{SuffBench} for a benchmark whose instances are tuples (repository snapshot, contract $C$ derived from a fail-to-pass commit, gold write-set, oracle slice $O$). The oracle slice is to be computed by observation: stub each unit outside the gold write-set, rebuild, rerun the checks in $V$, and retain the unit iff the verdict changes, with delta debugging to reduce the number of builds. Instances must postdate the training cutoff of any evaluated model.
 
-The dataset labels \emph{verification} sufficiency: what determines the verdict. Experiments measure \emph{generation} success: whether an editor given $K$ produces a passing edit. The two must not be conflated. Any claim of the form ``less context without loss'' is to be stated as ``within $\eps$ of the best observed pass rate under oracle $V$'' with the oracle residual reported as unmeasured. Nothing is released with this note.
+The dataset labels \emph{verification} sufficiency: what determines the verdict. Experiments are to measure \emph{generation} success: whether an editor given $K$ produces a passing edit. The two must not be conflated. Any claim of the form ``less context without loss'' is to be stated as ``within $\eps$ of the best observed pass rate under oracle $V$'' with the oracle residual reported as unmeasured. Nothing is released with this note.
 
 \section{Related work}
 
