@@ -3,7 +3,8 @@
 # Run from anywhere after the final compile of paper/main.tex.
 set -euo pipefail
 cd "$(dirname "$0")/../paper"
-tectonic --keep-intermediates --keep-logs main.tex >/dev/null
+TECTONIC="${TECTONIC:-$(command -v tectonic || echo /c/Users/visci/tools/tectonic/tectonic.exe)}"
+"$TECTONIC" --keep-intermediates --keep-logs main.tex >/dev/null
 test -f main.bbl || { echo "main.bbl missing"; exit 1; }
 mkdir -p ../release/arxiv
 cp main.tex main.bbl ../release/arxiv/
