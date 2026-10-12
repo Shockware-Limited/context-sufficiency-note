@@ -9,6 +9,8 @@ test -f main.bbl || { echo "main.bbl missing"; exit 1; }
 mkdir -p ../release/arxiv
 rm -f ../release/arxiv/*
 cp main.tex main.bbl ../release/arxiv/
+# arXiv (pdflatex, no BibTeX run): inline the bibliography so the build cannot depend on .bbl handling
+sed -i "s/\\bibliography{refs}/\\input{main.bbl}/" ../release/arxiv/main.tex
 # every \input{name} in main.tex ships as name.tex
 grep -o '\\input{[^}]*}' main.tex | sed 's/\\input{//; s/}//' | while read -r f; do
   if [ -f "$f.tex" ]; then cp "$f.tex" ../release/arxiv/; elif [ -f "$f" ]; then cp "$f" ../release/arxiv/; else echo "missing input: $f"; exit 1; fi
