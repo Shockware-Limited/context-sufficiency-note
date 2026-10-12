@@ -29,3 +29,8 @@ Text and PDF: CC-BY-4.0 (`LICENSE-CC-BY-4.0`). Code, including the Lean developm
 ## Citing
 
 Concept DOI (all versions): **[10.5281/zenodo.23282195](https://doi.org/10.5281/zenodo.23282195)**. Version 1.1 (current): [10.5281/zenodo.23282824](https://doi.org/10.5281/zenodo.23282824), tag `v1.1.0`. Version 1.0: [10.5281/zenodo.23282196](https://doi.org/10.5281/zenodo.23282196), tag `v1.0.0`. SuffBench specification: [10.5281/zenodo.23282863](https://doi.org/10.5281/zenodo.23282863). See `CITATION.cff`.
+
+## Follow-on work
+
+- SuffBench specification v0.1.0-spec: DOI [10.5281/zenodo.23282863](https://doi.org/10.5281/zenodo.23282863), https://github.com/Shockware-Limited/suffbench
+- Pilot measurement (24 instances, three models, October 2026): DOI [10.5281/zenodo.23307204](https://doi.org/10.5281/zenodo.23307204), `suffbench/pilot/`
