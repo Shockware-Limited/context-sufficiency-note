@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build a self-contained arXiv source tarball (TeX + BBL + every \input file) and extract the abstract.
+# Build a self-contained arXiv source tarball (TeX + inlined bibliography + every \input file) and extract the abstract.
 # Run from anywhere after the final compile of paper/main.tex.
 set -euo pipefail
 cd "$(dirname "$0")/../paper"
@@ -9,8 +9,15 @@ test -f main.bbl || { echo "main.bbl missing"; exit 1; }
 mkdir -p ../release/arxiv
 rm -f ../release/arxiv/*
 cp main.tex main.bbl ../release/arxiv/
-# arXiv (pdflatex, no BibTeX run): inline the bibliography so the build cannot depend on .bbl handling
-sed -i "s/\\bibliography{refs}/\\input{main.bbl}/" ../release/arxiv/main.tex
+# arXiv runs pdflatex without BibTeX: inline the bibliography so the build cannot depend on .bbl handling.
+python - <<'EOF'
+p = "../release/arxiv/main.tex"
+s = open(p, encoding="utf-8").read()
+assert "\\bibliography{refs}" in s
+s = s.replace("\\bibliography{refs}", "\\input{main.bbl}")
+open(p, "w", encoding="utf-8", newline="\n").write(s)
+print("bibliography inlined")
+EOF
 # every \input{name} in main.tex ships as name.tex
 grep -o '\\input{[^}]*}' main.tex | sed 's/\\input{//; s/}//' | while read -r f; do
   if [ -f "$f.tex" ]; then cp "$f.tex" ../release/arxiv/; elif [ -f "$f" ]; then cp "$f" ../release/arxiv/; else echo "missing input: $f"; exit 1; fi
