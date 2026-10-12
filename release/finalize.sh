@@ -4,9 +4,8 @@
 # Does NOT publish anything. Run from anywhere.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-CORPUS="${CORPUS:-/c/Users/visci/tools/corpus/cli}"
-TECTONIC="${TECTONIC:-/c/Users/visci/tools/tectonic/tectonic.exe}"
-export PATH="/c/Users/visci/tools/ssl-shim:/c/Users/visci/Python/Python314/Scripts:/mingw64/bin:$PATH"
+CORPUS="${CORPUS:?path to a cli/cli clone}"
+TECTONIC="${TECTONIC:-$(command -v tectonic)}"
 
 cd "$CORPUS"
 if [ -n "$(git status --short --untracked-files=no)" ]; then

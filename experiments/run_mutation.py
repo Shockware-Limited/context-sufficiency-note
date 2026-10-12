@@ -17,18 +17,9 @@ Resumable: existing lines in --out are counted and skipped.
 """
 import argparse, json, os, random, subprocess, sys, time, pathlib, collections
 
-GOENV = {
-    "LOCALAPPDATA": r"C:\Users\visci\AppData\Local",
-    "APPDATA": r"C:\Users\visci\AppData\Roaming",
-    "GOCACHE": r"C:\Users\visci\AppData\Local\go-build",
-    "GOPATH": r"C:\Users\visci\go",
-    "GOMODCACHE": r"C:\Users\visci\go\pkg\mod",
-    "GOFLAGS": "-mod=mod",
-    "HOME": r"C:\Users\visci",
-    "USERPROFILE": r"C:\Users\visci",
-}
-GO = r"C:\Program Files\Go\bin\go.exe"
-MUTATOR = r"C:\Users\visci\tools\mutator.exe"
+GOENV = {"GOFLAGS": "-mod=mod"}
+GO = os.environ.get("GO", "go")
+MUTATOR = os.environ.get("MUTATOR", "mutator")
 
 def env():
     e = dict(os.environ); e.update(GOENV); return e
