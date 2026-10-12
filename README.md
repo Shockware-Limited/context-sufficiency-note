@@ -34,3 +34,4 @@ Concept DOI (all versions): **[10.5281/zenodo.23282195](https://doi.org/10.5281/
 
 - SuffBench specification v0.1.0-spec: DOI [10.5281/zenodo.23282863](https://doi.org/10.5281/zenodo.23282863), https://github.com/Shockware-Limited/suffbench
 - Pilot measurement (24 instances, three models, October 2026): DOI [10.5281/zenodo.23307204](https://doi.org/10.5281/zenodo.23307204), `suffbench/pilot/`
+- Preregistered confirmatory study, Stage 1 protocol: DOI [10.5281/zenodo.23307547](https://doi.org/10.5281/zenodo.23307547)
