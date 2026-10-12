@@ -17,7 +17,14 @@ Resumable: existing lines in --out are counted and skipped.
 """
 import argparse, json, os, random, subprocess, sys, time, pathlib, collections
 
-GOENV = {"GOFLAGS": "-mod=mod"}
+# Detached shells on Windows may lack the profile variables Go needs to find its build cache.
+_HOME = os.environ.get("USERPROFILE") or os.path.expanduser("~")
+_LOCAL = os.environ.get("LOCALAPPDATA") or os.path.join(_HOME, "AppData", "Local")
+GOENV = {"GOFLAGS": "-mod=mod", "HOME": _HOME, "USERPROFILE": _HOME, "LOCALAPPDATA": _LOCAL,
+         "APPDATA": os.environ.get("APPDATA") or os.path.join(_HOME, "AppData", "Roaming"),
+         "GOCACHE": os.environ.get("GOCACHE") or os.path.join(_LOCAL, "go-build"),
+         "GOPATH": os.environ.get("GOPATH") or os.path.join(_HOME, "go")}
+GOENV["GOMODCACHE"] = os.environ.get("GOMODCACHE") or os.path.join(GOENV["GOPATH"], "pkg", "mod")
 GO = os.environ.get("GO", "go")
 MUTATOR = os.environ.get("MUTATOR", "mutator")
 
