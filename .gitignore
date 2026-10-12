@@ -7,3 +7,5 @@
 paper/dblp/
 paper/crossref/
 sufficiency/.lake/
+__pycache__/
+*.pyc

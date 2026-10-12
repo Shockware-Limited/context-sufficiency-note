@@ -14,9 +14,7 @@ are reported.
 | Item | Where |
 |---|---|
 | The note (LaTeX) | `paper/main.tex`, bibliography `paper/refs.bib` |
-| Citation verification log | `paper/VERIFICATION.md` |
 | Lean 4 mechanisation | `sufficiency/` (see `sufficiency/README.md` for the theorem-to-prose map) |
-| Reviewer checklist | `REVIEW.md` |
 | Release metadata | `release/` |
 
 Build the PDF with [Tectonic](https://tectonic-typesetting.github.io): `cd paper && tectonic main.tex`.

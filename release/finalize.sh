@@ -42,4 +42,4 @@ echo "undefined: $(grep -ci 'undefined' main.log)"
 cd "$ROOT" && bash release/make-arxiv-package.sh
 cp paper/main.pdf release/final.pdf && ots stamp release/final.pdf && ots info release/final.pdf.ots | head -3
 git add -A && git commit -q -m "Final measurement results, flake control, exact context sizes; final PDF timestamped" && git log --oneline | head -1
-echo "FINALISED (not published). Next: human cold read (REVIEW.md), then release/zenodo_publish.py --publish on zenodo.org."
+echo "FINALISED (not published). Next: human cold read, then release/zenodo_publish.py --publish on zenodo.org."
